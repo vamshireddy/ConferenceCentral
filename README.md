@@ -1,5 +1,4 @@
-App Engine application for the Udacity training course.
-
+# App Engine application for managing conferences. Developed on Maven framework using Java, Google Cloud End points.
 ## Products
 - [App Engine][1]
 
