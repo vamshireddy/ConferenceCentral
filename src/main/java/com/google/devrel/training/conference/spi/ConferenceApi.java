@@ -10,6 +10,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiMethod.HttpMethod;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.users.User;
 import com.google.devrel.training.conference.Constants;
 import com.google.devrel.training.conference.domain.Profile;
@@ -93,19 +94,42 @@ public class ConferenceApi {
         // If the displayName is null, set it to default value based on the user's email
         // by calling extractDefaultDisplayNameFromEmail(...)
         
-        if( displayName == null )
-        {
-        	displayName = extractDefaultDisplayNameFromEmail(mainEmail);
-        }
+
 
         // Create a new Profile entity from the
         // userId, displayName, mainEmail and teeShirtSize
         
-        Profile profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
-
-        // TODO 3 (In Lesson 3)
+        
+        // First check if the profile already exists in the data store
+        
+        String id = user.getUserId();
+        
+        Key key = Key.create(Profile.class, id);
+        
+        Profile profile = (Profile) ofy().load().key(key).now();
+        
+        if( profile == null )
+        {
+            if( displayName == null )
+            {
+            	displayName = extractDefaultDisplayNameFromEmail(mainEmail);
+            }
+            if( teeShirtSize == null )
+            {
+            	teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
+            }
+        	// Profile doesn't exist
+        	profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        }
+        else
+        {
+        	profile.updateDetails(displayName, teeShirtSize);
+        }
+        
         // Save the Profile entity in the datastore
 
+        ofy().save().entity(profile).now();
+        	
         // Return the profile
         return profile;
     }
@@ -125,12 +149,12 @@ public class ConferenceApi {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
-
-        // TODO
-        // load the Profile Entity
-        String userId = ""; // TODO
-        Key key = null; // TODO
-        Profile profile = null; // TODO load the Profile entity
+        
+        String userId = user.getUserId();
+        
+        Key key = Key.create(Profile.class, userId);
+        
+        Profile profile = (Profile)ofy().load().key(key).now();
         return profile;
     }
    

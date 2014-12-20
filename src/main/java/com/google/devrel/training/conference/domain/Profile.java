@@ -6,12 +6,14 @@ import com.googlecode.objectify.annotation.Id;
 
 
 // TODO indicate that this class is an Entity
+@Entity
 public class Profile {
 	String displayName;
 	String mainEmail;
 	TeeShirtSize teeShirtSize;
 
 	// TODO indicate that the userId is to be used in the Entity's key
+	@Id
 	String userId;
     
     /**
@@ -27,6 +29,18 @@ public class Profile {
     	this.displayName = displayName;
     	this.mainEmail = mainEmail;
     	this.teeShirtSize = teeShirtSize;
+    }
+    
+    public void updateDetails(String displayName, TeeShirtSize size)
+    {
+    	if( displayName!=null )
+    	{
+    		this.displayName = displayName;
+    	}
+    	if( size!=null )
+    	{
+    		this.teeShirtSize = size;
+    	}
     }
     
 	public String getDisplayName() {
