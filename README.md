@@ -1,4 +1,4 @@
-# App Engine application for managing conferences. Developed on Maven framework using Java, Google Cloud End points.
+# App Engine application for managing conferences. Developed on Google Cloud End points.
 ## Products
 - [App Engine][1]
 
